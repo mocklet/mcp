@@ -4,6 +4,7 @@ stages:
   - test
   - security
   - build
+  - release
 
 variables:
   GOPATH: $CI_PROJECT_DIR/.go
@@ -43,8 +44,26 @@ lint:
 build:
   stage: build
   script:
-    - go build -o mocklet-mcp .
+    - GOOS=linux GOARCH=amd64 go build -o mocklet-mcp-linux-amd64 .
+    - GOOS=linux GOARCH=arm64 go build -o mocklet-mcp-linux-arm64 .
+    - GOOS=windows GOARCH=amd64 go build -o mocklet-mcp-windows-amd64.exe .
+    - GOOS=darwin GOARCH=amd64 go build -o mocklet-mcp-darwin-amd64 .
+    - GOOS=darwin GOARCH=arm64 go build -o mocklet-mcp-darwin-arm64 .
   artifacts:
     paths:
-      - mocklet-mcp
+      - mocklet-mcp-linux-amd64
+      - mocklet-mcp-linux-arm64
+      - mocklet-mcp-windows-amd64.exe
+      - mocklet-mcp-darwin-amd64
+      - mocklet-mcp-darwin-arm64
     expire_in: 1 month
+
+release:
+  stage: release
+  image: node:20
+  before_script:
+    - npm install -g semantic-release @semantic-release/gitlab @semantic-release/commit-analyzer @semantic-release/release-notes-generator
+  script:
+    - npx semantic-release
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
