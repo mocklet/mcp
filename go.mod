@@ -1,11 +1,11 @@
 module mocklet-mcp
 
-go 1.26.5
+go 1.25.5
 
 require (
 	github.com/mark3labs/mcp-go v0.56.0
 	github.com/oapi-codegen/runtime v1.6.0
-	go.yaml.in/yaml/v3 v3.0.4
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
