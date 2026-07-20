@@ -14,7 +14,18 @@ With this server, an AI assistant can seamlessly upload HAR files, create templa
 
 ## 🛠 Installation
 
-### Requirements
+### Quick install (recommended)
+The [`scripts/install.sh`](scripts/install.sh) script downloads the latest release binary for your OS/architecture and registers it with your client in one step:
+
+```bash
+curl -fsSL https://gitlab.com/keystr0ke/mocklet-mcp/-/raw/main/scripts/install.sh | bash -s -- claude --token "your_service_token_here"
+curl -fsSL https://gitlab.com/keystr0ke/mocklet-mcp/-/raw/main/scripts/install.sh | bash -s -- codex  --token "your_service_token_here"
+curl -fsSL https://gitlab.com/keystr0ke/mocklet-mcp/-/raw/main/scripts/install.sh | bash -s -- agy    --token "your_service_token_here"
+```
+
+Supports Linux and macOS (amd64/arm64). It picks up `MOCKLET_API_URL`/`MOCKLET_SERVICE_TOKEN` from the environment too, and falls back to printing the manual config snippet if the target client's CLI isn't found on `PATH`. See the client-specific sections below if you'd rather configure things by hand, or need Windows/Cursor/Zed.
+
+### Requirements (build from source)
 - [Go](https://go.dev/) version 1.22 or newer.
 
 ### Build from source
@@ -63,6 +74,12 @@ Open your Claude Desktop configuration file (usually located at `~/Library/Appli
 ```
 *Restart Claude Desktop after modifying the file.*
 
+### Claude Code (CLI)
+```bash
+claude mcp add mocklet -s user -e MOCKLET_API_URL="http://localhost:8080" -e MOCKLET_SERVICE_TOKEN="your_service_token_here" -- /absolute/path/to/mocklet-mcp
+```
+`scripts/install.sh claude` does this for you.
+
 ### Cursor
 1. Go to **Settings > Features > MCP**.
 2. Click **+ Add New MCP Server**.
@@ -71,7 +88,7 @@ Open your Claude Desktop configuration file (usually located at `~/Library/Appli
 5. Command: `MOCKLET_API_URL="http://localhost:8080" MOCKLET_SERVICE_TOKEN="your_token" /absolute/path/to/mocklet-mcp`
 
 ### Google Antigravity (AGY)
-To integrate with Antigravity 2.0 (AGY / IDE), add the server to your MCP configuration file (`~/.gemini/antigravity-cli/mcp.json`):
+Add the server to your MCP configuration file at `~/.gemini/config/mcp_config.json` (older installs may still use the legacy path `~/.gemini/antigravity-cli/mcp_config.json`):
 
 ```json
 {
@@ -87,10 +104,25 @@ To integrate with Antigravity 2.0 (AGY / IDE), add the server to your MCP config
   }
 }
 ```
-*Restart AGY after saving the file.*
+*Restart AGY after saving the file.* `scripts/install.sh agy` does this for you.
 
-### Codex / Cline / VS Code
-If you are using extensions like Cline (formerly Claude Dev) or Codex in VS Code, you need to edit your MCP settings file (e.g., `cline_mcp_settings.json` for Cline, usually located at `~/Library/Application Support/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json` on macOS):
+### Codex CLI
+Codex's config is TOML, not JSON. Either run:
+
+```bash
+codex mcp add mocklet --env MOCKLET_API_URL="http://localhost:8080" --env MOCKLET_SERVICE_TOKEN="your_service_token_here" -- /absolute/path/to/mocklet-mcp
+```
+
+or edit `~/.codex/config.toml` directly:
+
+```toml
+[mcp_servers.mocklet]
+command = "/absolute/path/to/mocklet-mcp"
+env = { MOCKLET_API_URL = "http://localhost:8080", MOCKLET_SERVICE_TOKEN = "your_service_token_here" }
+```
+
+### Cline / VS Code
+If you are using the Cline (formerly Claude Dev) extension in VS Code, edit its MCP settings file (e.g. `~/Library/Application Support/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json` on macOS):
 
 ```json
 {

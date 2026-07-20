@@ -22,8 +22,9 @@ include:
 format:
   stage: test
   script:
-    - go fmt ./...
+    - test -z "$(gofmt -l .)" || (gofmt -l . && exit 1)
     - go vet ./...
+    - bash -n scripts/install.sh
 
 test:
   stage: test
