@@ -1,105 +1,106 @@
 # Mocklet MCP Server
 
-Mocklet MCP Server — это сервер на базе [Model Context Protocol (MCP)](https://modelcontextprotocol.io/), который позволяет AI-ассистентам (таким как Claude Desktop, Cursor, Windsurf и др.) нативно взаимодействовать с платформой мокирования Mocklet (Harmockery). 
+Mocklet MCP Server is a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server that allows AI assistants (such as Claude Desktop, Cursor, Windsurf, Zed, etc.) to natively interact with the Mocklet (Harmockery) mocking platform.
 
-С его помощью ИИ может "из коробки" загружать HAR-файлы, создавать шаблоны и разворачивать одноразовые (эфемеровые) mock-серверы для автономного прототипирования фронтенда и E2E-тестирования.
+With this server, an AI assistant can seamlessly upload HAR files, create templates, and spawn disposable (ephemeral) mock servers out-of-the-box for autonomous frontend prototyping and E2E testing.
 
-## Зачем это нужно?
+## Why use this?
 
-- **Автономная генерация тестов:** ИИ может самостоятельно поднять мок-сервер из HAR-файла, написать Cypress/Playwright тесты для проверки UI и затем удалить мок.
-- **Прототипирование Frontend:** ИИ-агент может за долю секунды создать реалистичный backend из шаблона Mocklet и начать верстать дашборд.
-- **Дебаггинг API:** Получение статистики использования мока (hit/miss) и отладка отсутствующих роутов прямо в чате с AI.
+- **Autonomous Test Generation:** The AI can independently spin up a mock server from a HAR file, write Cypress/Playwright tests to verify UI, and then tear down the mock.
+- **Frontend Prototyping:** The AI agent can create a realistic backend from a Mocklet template in milliseconds and immediately start developing the dashboard or UI.
+- **API Debugging:** Get mock usage statistics (hits/misses) and debug missing routes directly within the chat interface with your AI.
 
 ---
 
-## 🛠 Установка
+## 🛠 Installation
 
-### Требования
-- Установленный [Go](https://go.dev/) версии 1.21 или новее.
+### Requirements
+- [Go](https://go.dev/) version 1.22 or newer.
 
-### Сборка из исходников
-Склонируйте репозиторий и соберите бинарный файл:
+### Build from source
+Clone the repository and build the binary:
 
 ```bash
-cd mcp
+git clone https://gitlab.com/keystr0ke/mocklet-mcp.git
+cd mocklet-mcp
 go mod tidy
 go build -o mocklet-mcp .
 ```
 
-Это создаст исполняемый файл `mocklet-mcp` в текущей директории. Убедитесь, что вы запомнили или скопировали абсолютный путь к этому файлу (например, `/home/user/coding/mcp/mocklet-mcp`), он понадобится для настройки клиентов.
+This will create an executable `mocklet-mcp` binary in the current directory. Make sure to note the absolute path to this file (e.g., `/home/user/coding/mocklet-mcp/mocklet-mcp`), as you will need it to configure your clients.
 
 ---
 
-## ⚙️ Конфигурация (Переменные окружения)
+## ⚙️ Configuration (Environment Variables)
 
-Для работы сервера требуются следующие переменные окружения:
+The server requires the following environment variables to function properly:
 
-| Переменная | Описание | Пример |
+| Variable | Description | Example |
 | --- | --- | --- |
-| `MOCKLET_API_URL` | Базовый URL вашего Mocklet API. Если не указан, используется `http://localhost:8080` по умолчанию. | `https://api.mocklet.dev` |
-| `MOCKLET_SERVICE_TOKEN` | Сервисный токен (Bearer Token) для аутентификации в API Mocklet. | `mckt_123456789...` |
+| `MOCKLET_API_URL` | The base URL of your Mocklet API. If omitted, defaults to `http://localhost:8080`. | `https://api.mocklet.dev` |
+| `MOCKLET_SERVICE_TOKEN` | Service token (Bearer Token) for Mocklet API authentication. | `mckt_123456789...` |
 
 ---
 
-## 🚀 Настройка клиентов
+## 🚀 Client Setup
 
 ### Claude Desktop
-Откройте конфигурационный файл Claude Desktop (обычно находится в `~/Library/Application Support/Claude/claude_desktop_config.json` на macOS или `%APPDATA%\Claude\claude_desktop_config.json` на Windows) и добавьте секцию `mcpServers`:
+Open your Claude Desktop configuration file (usually located at `~/Library/Application Support/Claude/claude_desktop_config.json` on macOS or `%APPDATA%\Claude\claude_desktop_config.json` on Windows) and add the `mcpServers` section:
 
 ```json
 {
   "mcpServers": {
     "mocklet": {
-      "command": "/абсолютный/путь/к/mocklet-mcp",
+      "command": "/absolute/path/to/mocklet-mcp",
       "args": [],
       "env": {
         "MOCKLET_API_URL": "http://localhost:8080",
-        "MOCKLET_SERVICE_TOKEN": "ваш_сервисный_токен"
+        "MOCKLET_SERVICE_TOKEN": "your_service_token_here"
       }
     }
   }
 }
 ```
-*После изменения файла перезапустите Claude Desktop.*
+*Restart Claude Desktop after modifying the file.*
 
 ### Cursor
-1. Перейдите в **Settings > Features > MCP**.
-2. Нажмите **+ Add New MCP Server**.
-3. Тип (Type): `command`
-4. Имя (Name): `mocklet`
-5. Команда (Command): `MOCKLET_API_URL="http://localhost:8080" MOCKLET_SERVICE_TOKEN="ваш_токен" /абсолютный/путь/к/mocklet-mcp`
+1. Go to **Settings > Features > MCP**.
+2. Click **+ Add New MCP Server**.
+3. Type: `command`
+4. Name: `mocklet`
+5. Command: `MOCKLET_API_URL="http://localhost:8080" MOCKLET_SERVICE_TOKEN="your_token" /absolute/path/to/mocklet-mcp`
 
 ### Google Antigravity (AGY)
-Для интеграции с Antigravity 2.0 (AGY / IDE), добавьте сервер в конфигурационный файл MCP (`~/.gemini/antigravity-cli/mcp.json`):
+To integrate with Antigravity 2.0 (AGY / IDE), add the server to your MCP configuration file (`~/.gemini/antigravity-cli/mcp.json`):
 
 ```json
 {
   "mcpServers": {
     "mocklet": {
-      "command": "/абсолютный/путь/к/mocklet-mcp",
+      "command": "/absolute/path/to/mocklet-mcp",
       "args": [],
       "env": {
         "MOCKLET_API_URL": "http://localhost:8080",
-        "MOCKLET_SERVICE_TOKEN": "ваш_сервисный_токен"
+        "MOCKLET_SERVICE_TOKEN": "your_service_token_here"
       }
     }
   }
 }
 ```
-*После изменения файла, перезапустите AGY.*
+*Restart AGY after saving the file.*
 
 ### Codex / Cline / VS Code
-Если вы используете расширения вроде Cline (ранее Claude Dev) или Codex в VS Code, вам необходимо отредактировать файл настроек MCP (например, `cline_mcp_settings.json` для Cline, обычно расположен в `~/Library/Application Support/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json` на macOS):
+If you are using extensions like Cline (formerly Claude Dev) or Codex in VS Code, you need to edit your MCP settings file (e.g., `cline_mcp_settings.json` for Cline, usually located at `~/Library/Application Support/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json` on macOS):
 
 ```json
 {
   "mcpServers": {
     "mocklet": {
-      "command": "/абсолютный/путь/к/mocklet-mcp",
+      "command": "/absolute/path/to/mocklet-mcp",
       "args": [],
       "env": {
         "MOCKLET_API_URL": "http://localhost:8080",
-        "MOCKLET_SERVICE_TOKEN": "ваш_сервисный_токен"
+        "MOCKLET_SERVICE_TOKEN": "your_service_token_here"
       }
     }
   }
@@ -107,17 +108,17 @@ go build -o mocklet-mcp .
 ```
 
 ### Zed IDE
-Для локального использования в [Zed](https://zed.dev/) откройте файл настроек (`~/.config/zed/settings.json`) и добавьте блок `context_servers`:
+For local usage in [Zed](https://zed.dev/), open your settings file (`~/.config/zed/settings.json`) and add the `context_servers` block:
 
 ```json
 {
   "context_servers": {
     "mocklet": {
-      "command": "/абсолютный/путь/к/mocklet-mcp",
+      "command": "/absolute/path/to/mocklet-mcp",
       "args": [],
       "env": {
         "MOCKLET_API_URL": "http://localhost:8080",
-        "MOCKLET_SERVICE_TOKEN": "ваш_сервисный_токен"
+        "MOCKLET_SERVICE_TOKEN": "your_service_token_here"
       }
     }
   }
@@ -126,25 +127,25 @@ go build -o mocklet-mcp .
 
 ---
 
-## 🧰 Доступные инструменты (Tools)
+## 🧰 Available Tools
 
-После подключения ИИ-ассистент получит доступ к следующим операциям:
+Once connected, the AI assistant will have access to the following operations:
 
-- `mocklet_validate_har` — валидация HAR-файла перед деплоем.
-- `mocklet_create_mock` — создание одноразового мок-сервера из HAR-файла.
-- `mocklet_list_mocks` — получение списка активных моков.
-- `mocklet_get_mock_stats` — получение статистики (хиты/промахи) конкретного мока.
-- `mocklet_delete_mock` — остановка и удаление мок-сервера.
-- `mocklet_create_template` — загрузка HAR-файла для создания переиспользуемого шаблона.
-- `mocklet_list_templates` — поиск существующих шаблонов.
-- `mocklet_spawn_mock` — быстрый запуск эфемерового мока на базе готового шаблона.
-- `mocklet_upload_template_revision` — обновление логики шаблона новым HAR-файлом.
+- `mocklet_validate_har` — Validates a HAR file before deployment.
+- `mocklet_create_mock` — Creates a disposable mock server from a HAR file.
+- `mocklet_list_mocks` — Retrieves a list of active mocks.
+- `mocklet_get_mock_stats` — Retrieves statistics (hits/misses) for a specific mock.
+- `mocklet_delete_mock` — Stops and deletes a mock server.
+- `mocklet_create_template` — Uploads a HAR file to create a reusable template.
+- `mocklet_list_templates` — Searches for existing templates.
+- `mocklet_spawn_mock` — Quickly launches an ephemeral mock based on an existing template.
+- `mocklet_upload_template_revision` — Updates the logic of an existing template using a new HAR file.
 
-## 💬 Встроенные промпты (Prompts)
+## 💬 Built-in Prompts
 
-Сервер также предоставляет готовые сценарии (prompts), доступные в клиентах с поддержкой этой функции (например, в Claude), для автоматизации популярных задач:
-- **Spawn Dependency Mock** (Запуск зависимости)
-- **Debug Mock Usage** (Дебаг ошибок 404)
-- **Generate Frontend with Mock Data** (Создание UI с тестовыми данными)
-- **Integration Testing Setup** (Настройка Cypress/Playwright тестов)
-- **HAR Validation & Cleanup** (Очистка и проверка HAR)
+The server also provides pre-configured prompts accessible in supported clients (like Claude) to automate popular tasks:
+- **Spawn Dependency Mock**
+- **Debug Mock Usage**
+- **Generate Frontend with Mock Data**
+- **Integration Testing Setup**
+- **HAR Validation & Cleanup**
