@@ -50,7 +50,7 @@ func createTemplateHandler(ctx context.Context, request mcp.CallToolRequest) (*m
 
 func listTemplatesHandler(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 	limit := int(request.GetFloat("limit", 5))
-	
+
 	params := &client.ListTemplatesParams{
 		Limit: &limit,
 	}
@@ -102,12 +102,12 @@ func uploadTemplateRevisionHandler(ctx context.Context, request mcp.CallToolRequ
 		return mcp.NewToolResultError(fmt.Sprintf("Failed to prepare request: %v", err)), nil
 	}
 
-	resp, err := apiClient.UploadTemplateRevisionWithBodyWithResponse(ctx, templateId, contentType, body)
+	resp, err := apiClient.UploadTemplateRevisionFileWithBodyWithResponse(ctx, templateId, contentType, body)
 	if err != nil {
 		return mcp.NewToolResultError(fmt.Sprintf("Request failed: %v", err)), nil
 	}
 
-	if resp.StatusCode() != 200 {
+	if resp.StatusCode() != 201 && resp.StatusCode() != 200 {
 		return formatError(resp.StatusCode(), resp.Body), nil
 	}
 

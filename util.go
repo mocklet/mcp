@@ -8,7 +8,6 @@ import (
 	"path/filepath"
 )
 
-
 // createMultipartFileWithFields creates a multipart request body containing a file and additional text fields.
 func createMultipartFileWithFields(filePath string, fields map[string]string) (string, io.Reader, error) {
 	file, err := os.Open(filePath)
@@ -44,4 +43,3 @@ func createMultipartFileWithFields(filePath string, fields map[string]string) (s
 
 	return writer.FormDataContentType(), body, nil
 }
-

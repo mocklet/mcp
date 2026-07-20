@@ -41,7 +41,7 @@ func createMockHandler(ctx context.Context, request mcp.CallToolRequest) (*mcp.C
 
 func listMocksHandler(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 	limit := int(request.GetFloat("limit", 5))
-	
+
 	params := &client.ListMocksParams{
 		Limit: &limit,
 	}
