@@ -1,4 +1,4 @@
-image: golang:1.22
+image: golang:latest
 
 stages:
   - test
@@ -35,7 +35,7 @@ test:
     expire_in: 1 week
 
 lint:
-  image: golangci/golangci-lint:v1.54.2
+  image: golangci/golangci-lint:latest
   stage: test
   script:
     - golangci-lint run -v --timeout 5m
