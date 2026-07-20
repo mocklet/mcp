@@ -28,14 +28,14 @@ func TestHandlers(t *testing.T) {
 	mux.HandleFunc("/api/v1/har/validate-file", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{"valid": true, "errors": []}`))
+		_, _ = w.Write([]byte(`{"valid": true, "errors": []}`))
 	})
 	
 	// mocklet_create_mock endpoint
 	mux.HandleFunc("/api/v1/mocks/file", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
-		w.Write([]byte(`{"mock_id": "mock_123", "url": "http://mock_123.example.com"}`))
+		_, _ = w.Write([]byte(`{"mock_id": "mock_123", "url": "http://mock_123.example.com"}`))
 	})
 	
 	ts := httptest.NewServer(mux)
