@@ -1,0 +1,50 @@
+image: golang:1.21
+
+stages:
+  - test
+  - security
+  - build
+
+variables:
+  GOPATH: $CI_PROJECT_DIR/.go
+  CGO_ENABLED: 0
+
+cache:
+  paths:
+    - .go/pkg/mod/
+
+include:
+  - template: Security/SAST.gitlab-ci.yml
+  - template: Security/Secret-Detection.gitlab-ci.yml
+  - template: Security/Dependency-Scanning.gitlab-ci.yml
+
+format:
+  stage: test
+  script:
+    - go fmt ./...
+    - go vet ./...
+
+test:
+  stage: test
+  script:
+    - go test -v -coverprofile=coverage.out ./...
+    - go tool cover -func=coverage.out
+  artifacts:
+    paths:
+      - coverage.out
+    expire_in: 1 week
+
+lint:
+  image: golangci/golangci-lint:v1.54.2
+  stage: test
+  script:
+    - golangci-lint run -v --timeout 5m
+
+build:
+  stage: build
+  script:
+    - go build -o mocklet-mcp .
+  artifacts:
+    paths:
+      - mocklet-mcp
+    expire_in: 1 month
