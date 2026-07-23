@@ -4,6 +4,17 @@ Mocklet MCP Server is a [Model Context Protocol (MCP)](https://modelcontextproto
 
 With this server, an AI assistant can seamlessly upload HAR files, create templates, and spawn disposable (ephemeral) mock servers out-of-the-box for autonomous frontend prototyping and E2E testing.
 
+## Open Source & Repositories
+
+Mocklet components are developed in GitLab, with read-only mirrors maintained on GitHub for integrations and releases.
+
+| Component | Origin (GitLab) | Mirror (GitHub) |
+|-----------|-----------------|-----------------|
+| **MCP Server** | [keystr0ke/mocklet-mcp](https://gitlab.com/keystr0ke/mocklet-mcp/) | [mocklet/mcp](https://github.com/mocklet/mcp) |
+| **Zed Extension** | [keystr0ke/mocklet-zed](https://gitlab.com/keystr0ke/mocklet-zed/) | [mocklet/mcp-zed](https://github.com/mocklet/mcp-zed) |
+
+---
+
 ## Why use this?
 
 - **Autonomous Test Generation:** The AI can independently spin up a mock server from a HAR file, write Cypress/Playwright tests to verify UI, and then tear down the mock.
@@ -140,7 +151,9 @@ If you are using the Cline (formerly Claude Dev) extension in VS Code, edit its 
 ```
 
 ### Zed IDE
-For local usage in [Zed](https://zed.dev/), open your settings file (`~/.config/zed/settings.json`) and add the `context_servers` block:
+For seamless integration with [Zed](https://zed.dev/), we recommend using the official Mocklet extension. You can find its source code and instructions in the [Mocklet Zed Extension Repository](https://github.com/mocklet/mcp-zed).
+
+Alternatively, to configure the MCP server manually without the extension, open your settings file (`~/.config/zed/settings.json`) and add the `context_servers` block:
 
 ```json
 {
