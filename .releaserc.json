@@ -1,5 +1,4 @@
 {
-  "repositoryUrl": "https://github.com/mocklet/mcp.git",
   "branches": [
     "main",
     "master"
@@ -9,18 +8,6 @@
     "@semantic-release/release-notes-generator",
     [
       "@semantic-release/gitlab",
-      {
-        "assets": [
-          { "path": "mocklet-mcp-linux-amd64", "label": "Linux AMD64" },
-          { "path": "mocklet-mcp-linux-arm64", "label": "Linux ARM64" },
-          { "path": "mocklet-mcp-windows-amd64.exe", "label": "Windows AMD64" },
-          { "path": "mocklet-mcp-darwin-amd64", "label": "macOS AMD64" },
-          { "path": "mocklet-mcp-darwin-arm64", "label": "macOS ARM64" }
-        ]
-      }
-    ],
-    [
-      "@semantic-release/github",
       {
         "assets": [
           { "path": "mocklet-mcp-linux-amd64", "label": "Linux AMD64" },
