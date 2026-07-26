@@ -95,3 +95,22 @@ func deleteMockHandler(ctx context.Context, request mcp.CallToolRequest) (*mcp.C
 
 	return mcp.NewToolResultText("Mock deleted successfully"), nil
 }
+
+func restartMockHandler(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+	mockId, err := request.RequireString("mock_id")
+	if err != nil {
+		return mcp.NewToolResultError("mock_id must be a string"), nil
+	}
+
+	resp, err := apiClient.RestartMockWithResponse(ctx, mockId)
+	if err != nil {
+		return mcp.NewToolResultError(fmt.Sprintf("Request failed: %v", err)), nil
+	}
+
+	if resp.StatusCode() != 200 {
+		return formatError(resp.StatusCode(), resp.Body), nil
+	}
+
+	b, _ := json.MarshalIndent(resp.JSON200, "", "  ")
+	return mcp.NewToolResultText(fmt.Sprintf("Mock restarted:\n```json\n%s\n```", string(b))), nil
+}

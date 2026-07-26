@@ -142,3 +142,52 @@ func uploadTemplateRevisionHandler(ctx context.Context, request mcp.CallToolRequ
 	b, _ := json.MarshalIndent(resp.JSON201, "", "  ")
 	return mcp.NewToolResultText(fmt.Sprintf("Template updated successfully:\n```json\n%s\n```", string(b))), nil
 }
+
+func updateTemplateHandler(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+	templateID, err := request.RequireString("template_public_id")
+	if err != nil {
+		return mcp.NewToolResultError("template_public_id must be a string"), nil
+	}
+
+	reqBody := client.TemplateUpdateRequest{}
+
+	name := request.GetString("name", "")
+	if name != "" {
+		reqBody.Name = &name
+	}
+	desc := request.GetString("description", "")
+	if desc != "" {
+		reqBody.Description = &desc
+	}
+
+	resp, err := apiClient.UpdateTemplateWithResponse(ctx, templateID, reqBody)
+	if err != nil {
+		return mcp.NewToolResultError(fmt.Sprintf("Request failed: %v", err)), nil
+	}
+
+	if resp.StatusCode() != 200 {
+		return formatError(resp.StatusCode(), resp.Body), nil
+	}
+
+	b, _ := json.MarshalIndent(resp.JSON200, "", "  ")
+	return mcp.NewToolResultText(fmt.Sprintf("Template metadata updated:\n```json\n%s\n```", string(b))), nil
+}
+
+func downloadTemplateHarHandler(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+	templateID, err := request.RequireString("template_public_id")
+	if err != nil {
+		return mcp.NewToolResultError("template_public_id must be a string"), nil
+	}
+
+	resp, err := apiClient.DownloadTemplateHarWithResponse(ctx, templateID)
+	if err != nil {
+		return mcp.NewToolResultError(fmt.Sprintf("Request failed: %v", err)), nil
+	}
+
+	if resp.StatusCode() != 200 {
+		return formatError(resp.StatusCode(), resp.Body), nil
+	}
+
+	b, _ := json.MarshalIndent(resp.JSON200, "", "  ")
+	return mcp.NewToolResultText(fmt.Sprintf("Template HAR:\n```json\n%s\n```", string(b))), nil
+}

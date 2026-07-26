@@ -188,6 +188,9 @@ Once connected, the AI assistant will have access to the following operations:
 - `mocklet_spawn_mock` — Quickly launches an ephemeral mock based on an existing template.
 - `mocklet_upload_template_revision` — Updates the logic of an existing template using a new HAR file.
 - `mocklet_get_template_openapi` — Generates and downloads an OpenAPI 3.0 specification for a template.
+- `mocklet_update_template` — Updates template metadata (name, description, visibility).
+- `mocklet_download_template_har` — Downloads the original HAR document of a template.
+- `mocklet_restart_mock` — Restarts an active mock to reset its sequence states.
 
 ## 💬 Built-in Prompts
 

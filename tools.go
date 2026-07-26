@@ -66,6 +66,23 @@ func registerTools() {
 		mcp.WithString("template_public_id", mcp.Required(), mcp.Description("Template Public ID")),
 		mcp.WithString("format", mcp.Description("Format: yaml (default) or json")),
 	), getTemplateOpenApiHandler)
+
+	mcpServer.AddTool(mcp.NewTool("mocklet_update_template",
+		mcp.WithDescription("Update template metadata (name, description, etc)."),
+		mcp.WithString("template_public_id", mcp.Required(), mcp.Description("Template Public ID")),
+		mcp.WithString("name", mcp.Description("New name")),
+		mcp.WithString("description", mcp.Description("New description")),
+	), updateTemplateHandler)
+
+	mcpServer.AddTool(mcp.NewTool("mocklet_download_template_har",
+		mcp.WithDescription("Download the original HAR document of a template."),
+		mcp.WithString("template_public_id", mcp.Required(), mcp.Description("Template Public ID")),
+	), downloadTemplateHarHandler)
+
+	mcpServer.AddTool(mcp.NewTool("mocklet_restart_mock",
+		mcp.WithDescription("Restart a mock to reset its sequence states."),
+		mcp.WithString("mock_id", mcp.Required(), mcp.Description("Mock ID")),
+	), restartMockHandler)
 }
 
 func formatError(status int, body []byte) *mcp.CallToolResult {
