@@ -170,6 +170,8 @@ Alternatively, to configure the MCP server manually without the extension, open 
 }
 ```
 
+*(Note: If you are using the Mocklet Zed Extension instead of manual config, put these variables inside a `"settings"` block instead of `"env"` and omit the `"command"`).*
+
 ---
 
 ## 🧰 Available Tools
