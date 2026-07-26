@@ -68,6 +68,34 @@ func listTemplatesHandler(ctx context.Context, request mcp.CallToolRequest) (*mc
 	return mcp.NewToolResultText(fmt.Sprintf("Templates:\n```json\n%s\n```", string(b))), nil
 }
 
+func getTemplateOpenApiHandler(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+	templateID, err := request.RequireString("template_public_id")
+	if err != nil {
+		return mcp.NewToolResultError("template_public_id must be a string"), nil
+	}
+	format := request.GetString("format", "yaml")
+
+	params := &client.GetTemplateOpenAPIParams{
+		Format: &format,
+	}
+
+	resp, err := apiClient.GetTemplateOpenAPIWithResponse(ctx, templateID, params)
+	if err != nil {
+		return mcp.NewToolResultError(fmt.Sprintf("Request failed: %v", err)), nil
+	}
+
+	if resp.StatusCode() != 200 {
+		return formatError(resp.StatusCode(), resp.Body), nil
+	}
+
+	contentType := resp.ContentType()
+	if contentType == "" {
+		contentType = "text/yaml"
+	}
+	
+	return mcp.NewToolResultText(fmt.Sprintf("OpenAPI Spec:\n```%s\n%s\n```", format, string(resp.Body))), nil
+}
+
 func spawnMockHandler(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 	templateId, err := request.RequireString("template_public_id")
 	if err != nil {

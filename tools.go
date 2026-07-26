@@ -60,6 +60,12 @@ func registerTools() {
 		mcp.WithString("template_public_id", mcp.Required(), mcp.Description("Template Public ID")),
 		mcp.WithString("har_file_path", mcp.Required(), mcp.Description("Absolute path to the local HAR file")),
 	), uploadTemplateRevisionHandler)
+
+	mcpServer.AddTool(mcp.NewTool("mocklet_get_template_openapi",
+		mcp.WithDescription("Generate and download an OpenAPI 3.0 document for a template."),
+		mcp.WithString("template_public_id", mcp.Required(), mcp.Description("Template Public ID")),
+		mcp.WithString("format", mcp.Description("Format: yaml (default) or json")),
+	), getTemplateOpenApiHandler)
 }
 
 func formatError(status int, body []byte) *mcp.CallToolResult {
