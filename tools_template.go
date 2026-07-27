@@ -94,9 +94,10 @@ func getTemplateOpenApiHandler(ctx context.Context, request mcp.CallToolRequest)
 	}
 
 	formatLabel := format
-	if contentType == "application/json" {
+	switch contentType {
+	case "application/json":
 		formatLabel = "json"
-	} else if contentType == "application/yaml" || contentType == "text/yaml" {
+	case "application/yaml", "text/yaml":
 		formatLabel = "yaml"
 	}
 
