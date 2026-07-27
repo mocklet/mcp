@@ -31,7 +31,7 @@ func createMockHandler(ctx context.Context, request mcp.CallToolRequest) (*mcp.C
 		return mcp.NewToolResultError(fmt.Sprintf("Request failed: %v", err)), nil
 	}
 
-	if resp.StatusCode() != 201 && resp.StatusCode() != 200 {
+	if resp.StatusCode() != 201 {
 		return formatError(resp.StatusCode(), resp.Body), nil
 	}
 

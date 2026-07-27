@@ -40,7 +40,7 @@ func createTemplateHandler(ctx context.Context, request mcp.CallToolRequest) (*m
 		return mcp.NewToolResultError(fmt.Sprintf("Request failed: %v", err)), nil
 	}
 
-	if resp.StatusCode() != 201 && resp.StatusCode() != 200 {
+	if resp.StatusCode() != 201 {
 		return formatError(resp.StatusCode(), resp.Body), nil
 	}
 
@@ -92,8 +92,26 @@ func getTemplateOpenApiHandler(ctx context.Context, request mcp.CallToolRequest)
 	if contentType == "" {
 		contentType = "text/yaml"
 	}
-	
-	return mcp.NewToolResultText(fmt.Sprintf("OpenAPI Spec:\n```%s\n%s\n```", format, string(resp.Body))), nil
+
+	formatLabel := format
+	if contentType == "application/json" {
+		formatLabel = "json"
+	} else if contentType == "application/yaml" || contentType == "text/yaml" {
+		formatLabel = "yaml"
+	}
+
+	msg := "OpenAPI Spec:\n"
+	if resp.Headers200 != nil {
+		if resp.Headers200.XSpecWarnings != nil && *resp.Headers200.XSpecWarnings != "" {
+			msg += fmt.Sprintf("Warnings: %s\n", *resp.Headers200.XSpecWarnings)
+		}
+		if resp.Headers200.XSpecCompleteness != nil && *resp.Headers200.XSpecCompleteness != "" {
+			msg += fmt.Sprintf("Completeness: %s\n", *resp.Headers200.XSpecCompleteness)
+		}
+	}
+
+	msg += fmt.Sprintf("```%s\n%s\n```", formatLabel, string(resp.Body))
+	return mcp.NewToolResultText(msg), nil
 }
 
 func spawnMockHandler(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
@@ -107,7 +125,7 @@ func spawnMockHandler(ctx context.Context, request mcp.CallToolRequest) (*mcp.Ca
 		return mcp.NewToolResultError(fmt.Sprintf("Request failed: %v", err)), nil
 	}
 
-	if resp.StatusCode() != 201 && resp.StatusCode() != 200 {
+	if resp.StatusCode() != 201 {
 		return formatError(resp.StatusCode(), resp.Body), nil
 	}
 
@@ -135,7 +153,7 @@ func uploadTemplateRevisionHandler(ctx context.Context, request mcp.CallToolRequ
 		return mcp.NewToolResultError(fmt.Sprintf("Request failed: %v", err)), nil
 	}
 
-	if resp.StatusCode() != 201 && resp.StatusCode() != 200 {
+	if resp.StatusCode() != 201 {
 		return formatError(resp.StatusCode(), resp.Body), nil
 	}
 
